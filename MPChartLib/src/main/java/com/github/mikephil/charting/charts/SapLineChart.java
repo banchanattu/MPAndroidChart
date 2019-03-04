@@ -1,6 +1,7 @@
 package com.github.mikephil.charting.charts;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -54,6 +55,9 @@ public class SapLineChart extends LineChart {
     @Override
     protected void init() {
         super.init();
+        float legendTitleDp = Utils.calcTextHeight(this.getLegendRenderer().getLabelPaint(), "ABC");
+        float legendTitlePixel = Utils.convertDpToPixel(legendTitleDp);
+        mLegend.setYOffset(legendTitlePixel);
         mLegendRenderer = new SapLegendRenderer(mViewPortHandler, mLegend);
     }
 
@@ -105,10 +109,15 @@ public class SapLineChart extends LineChart {
             offsetRight += getExtraRightOffset();
             offsetBottom += getExtraBottomOffset();
             offsetLeft += getExtraLeftOffset();
-            float titleHeightDp = Utils.calcTextHeight(this.mDescPaint, "ABC");
-            float titleHeightPixel = Utils.convertDpToPixel(titleHeightDp);
-            offsetTop += titleHeightPixel * 3;
+            Rect bounds = new Rect();
+            this.getLegendRenderer().getLabelPaint().getTextBounds("ABC", 0, "ABC".length(), bounds);
+            float labelLineSpacing = Utils.getLineSpacing(getLegendRenderer().getLabelPaint(), ((SapLegendRenderer)getLegendRenderer()).getLegendFortMetrics())
+                    + Utils.convertDpToPixel(mLegend.getYEntrySpace());
+            float titleHeightDp = Utils.convertDpToPixel(bounds.bottom - bounds.top + labelLineSpacing);
 
+            float titleHeightPixel = Utils.convertDpToPixel(titleHeightDp);
+            offsetTop += titleHeightPixel ;
+            offsetBottom -= titleHeightPixel ;
             float minOffset = Utils.convertDpToPixel(mMinOffset);
 
             mViewPortHandler.restrainViewPort(
@@ -122,6 +131,8 @@ public class SapLineChart extends LineChart {
                         + ", offsetRight: " + offsetRight + ", offsetBottom: " + offsetBottom);
                 Log.i(LOG_TAG, "Content: " + mViewPortHandler.getContentRect().toString());
             }
+            //Making room form X Axis Label
+            mViewPortHandler.setChartDimens(mViewPortHandler.getChartWidth(), mViewPortHandler.getChartHeight() - titleHeightPixel );
         }
 
         prepareOffsetMatrix();

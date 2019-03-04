@@ -3,9 +3,11 @@ package com.github.mikephil.charting.renderer;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.Typeface;
 
 import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.utils.Utils;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 
 public class SapLegendRenderer extends LegendRenderer {
@@ -43,6 +45,9 @@ public class SapLegendRenderer extends LegendRenderer {
         c.drawText(labelText, x, y, p);
     }
 
+    public Paint.FontMetrics getLegendFortMetrics() {
+        return legendFontMetrics;
+    }
     /**
      /**
      * Draws the provided label at the given position.
@@ -52,20 +57,30 @@ public class SapLegendRenderer extends LegendRenderer {
      * @param y
      * @param label the label to draw
      */
-    @Override
     protected void drawLabel(Canvas c, float x, float y, String label) {
-        c.drawText(label, x, y, mLegendLabelPaint);
-        if (selectedValues != null) {
-            Rect bounds = new Rect();
-            mLegendLabelPaint.getTextBounds(label, 0, label.length(), bounds);
-            drawTextOnHeader(c, x + bounds.right * 1.2f, (y + bounds.top * 3f), selectedValues.getXVal(), mLegendLabelPaint.getTextSize(), mLegendLabelPaint.getColor());
-            drawTextOnHeader(c, x + bounds.right * 1.2f, (y ), selectedValues.getYVal(), mLegendLabelPaint.getTextSize()*1.5f, mLegendLabelPaint.getColor());
+        c.drawText(label, x, y, this.mLegendLabelPaint);
+        Rect bounds;
+        if (this.selectedValues != null) {
+            bounds = new Rect();
+            this.mLegendLabelPaint.getTextBounds(label, 0, label.length(), bounds);
+            float labelLineSpacing = Utils.getLineSpacing(mLegendLabelPaint, legendFontMetrics)
+                    + Utils.convertDpToPixel(mLegend.getYEntrySpace());
+            float textHeight = Utils.convertDpToPixel(bounds.bottom - bounds.top + labelLineSpacing);
+            this.drawTextOnHeader(c, x + (float)bounds.right * 1.2F, y - textHeight, this.selectedValues.getXVal(), this.mLegendLabelPaint.getTextSize(), this.mLegendLabelPaint.getColor());
+            this.drawTextOnHeader(c, x + (float)bounds.right * 1.2F, y, this.selectedValues.getYVal(), this.mLegendLabelPaint.getTextSize() * 1.5F, this.mLegendLabelPaint.getColor());
+        }
 
+        if (this.chartTitle != null) {
+            bounds = new Rect();
+            this.mLegendLabelPaint.getTextBounds(label, 0, label.length(), bounds);
+            this.drawTextOnHeader(c, x - this.mLegend.mNeededWidth / 2.0F, y + this.mLegend.mNeededHeight, this.chartTitle, this.mLegendLabelPaint.getTextSize() * 1.5F, this.mLegendLabelPaint.getColor());
+            RectF size = this.mViewPortHandler.getContentRect();
+            //float labelX = Utils.convertDpToPixel( x  - ( mViewPortHandler.offsetRight() + mViewPortHandler.offsetLeft())/2f);
+            //float labelY = Utils.convertDpToPixel(y - (mViewPortHandler.offsetBottom()));
+            //this.drawTextOnHeader(c, labelX, labelY, "Days", this.mLegendLabelPaint.getTextSize() * 1.5F, this.mLegendLabelPaint.getColor());
+            //this.drawTextOnHeader(c, (size.left + size.right) / 2.0F, size.bottom, "Days", this.mLegendLabelPaint.getTextSize() * 1.5F, this.mLegendLabelPaint.getColor());
+            this.drawTextOnHeader(c, (size.left + size.right) / 2.0f, size.bottom + this.mLegend.mNeededHeight/2f, "Days", this.mLegendLabelPaint.getTextSize() * 1.5F, this.mLegendLabelPaint.getColor());
         }
-        if (chartTitle != null) {
-            Rect bounds = new Rect();
-            mLegendLabelPaint.getTextBounds(label, 0, label.length(), bounds);
-            drawTextOnHeader(c, x - mLegend.mNeededWidth/2f, y + mLegend.mNeededHeight, chartTitle, mLegendLabelPaint.getTextSize()*1.5f, mLegendLabelPaint.getColor() );
-        }
+
     }
 }
