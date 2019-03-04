@@ -73,13 +73,21 @@ public class SapLegendRenderer extends LegendRenderer {
         if (this.chartTitle != null) {
             bounds = new Rect();
             this.mLegendLabelPaint.getTextBounds(label, 0, label.length(), bounds);
-            this.drawTextOnHeader(c, x - this.mLegend.mNeededWidth / 2.0F, y + this.mLegend.mNeededHeight, this.chartTitle, this.mLegendLabelPaint.getTextSize() * 1.5F, this.mLegendLabelPaint.getColor());
+            float labelLineSpacing = Utils.getLineSpacing(mLegendLabelPaint, legendFontMetrics)
+                    + Utils.convertDpToPixel(mLegend.getYEntrySpace());
+            //this.drawTextOnHeader(c, x - this.mLegend.mNeededWidth / 2.0F, y + Utils.convertDpToPixel(this.mLegend.mNeededHeight), this.chartTitle, this.mLegendLabelPaint.getTextSize() * 1.5F, this.mLegendLabelPaint.getColor());
+            float textHeight = Utils.convertDpToPixel(bounds.bottom - bounds.top + labelLineSpacing);
+            this.drawTextOnHeader(c, x - this.mLegend.mNeededWidth / 2.0F, y + textHeight, this.chartTitle, this.mLegendLabelPaint.getTextSize() * 1.5F, this.mLegendLabelPaint.getColor());
             RectF size = this.mViewPortHandler.getContentRect();
             //float labelX = Utils.convertDpToPixel( x  - ( mViewPortHandler.offsetRight() + mViewPortHandler.offsetLeft())/2f);
             //float labelY = Utils.convertDpToPixel(y - (mViewPortHandler.offsetBottom()));
             //this.drawTextOnHeader(c, labelX, labelY, "Days", this.mLegendLabelPaint.getTextSize() * 1.5F, this.mLegendLabelPaint.getColor());
             //this.drawTextOnHeader(c, (size.left + size.right) / 2.0F, size.bottom, "Days", this.mLegendLabelPaint.getTextSize() * 1.5F, this.mLegendLabelPaint.getColor());
-            this.drawTextOnHeader(c, (size.left + size.right) / 2.0f, size.bottom + this.mLegend.mNeededHeight/2f, "Days", this.mLegendLabelPaint.getTextSize() * 1.5F, this.mLegendLabelPaint.getColor());
+            //this.drawTextOnHeader(c, (size.left + size.right) / 2.0f, size.bottom + this.mLegend.mNeededHeight/2f, "Days", this.mLegendLabelPaint.getTextSize() * 1.5F, this.mLegendLabelPaint.getColor());
+//            float tx = (this.mViewPortHandler.offsetRight() + this.mViewPortHandler.offsetLeft())/2f;
+//            float ty =  this.mViewPortHandler.offsetBottom();
+//            this.drawTextOnHeader(c, tx, ty - textHeight , "Days", this.mLegendLabelPaint.getTextSize() * 1.5F, this.mLegendLabelPaint.getColor());
+            this.drawTextOnHeader(c, (size.left + size.right) / 2.0f, size.bottom + textHeight  , "Days", this.mLegendLabelPaint.getTextSize() * 1.5F, this.mLegendLabelPaint.getColor());
         }
 
     }

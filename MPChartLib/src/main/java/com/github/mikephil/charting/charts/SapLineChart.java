@@ -116,8 +116,8 @@ public class SapLineChart extends LineChart {
             float titleHeightDp = Utils.convertDpToPixel(bounds.bottom - bounds.top + labelLineSpacing);
 
             float titleHeightPixel = Utils.convertDpToPixel(titleHeightDp);
-            offsetTop += titleHeightPixel ;
-            offsetBottom -= titleHeightPixel ;
+            //offsetTop += titleHeightPixel ;
+            offsetBottom += titleHeightPixel *.5f ;
             float minOffset = Utils.convertDpToPixel(mMinOffset);
 
             mViewPortHandler.restrainViewPort(
@@ -132,7 +132,7 @@ public class SapLineChart extends LineChart {
                 Log.i(LOG_TAG, "Content: " + mViewPortHandler.getContentRect().toString());
             }
             //Making room form X Axis Label
-            mViewPortHandler.setChartDimens(mViewPortHandler.getChartWidth(), mViewPortHandler.getChartHeight() - titleHeightPixel );
+            //mViewPortHandler.setChartDimens(mViewPortHandler.getChartWidth(), mViewPortHandler.getChartHeight() - titleHeightPixel );
         }
 
         prepareOffsetMatrix();
