@@ -1,6 +1,7 @@
 package com.github.mikephil.charting.renderer;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -72,23 +73,49 @@ public class SapLegendRenderer extends LegendRenderer {
 
         if (this.chartTitle != null) {
             bounds = new Rect();
-            this.mLegendLabelPaint.getTextBounds(label, 0, label.length(), bounds);
             float labelLineSpacing = Utils.getLineSpacing(mLegendLabelPaint, legendFontMetrics)
                     + Utils.convertDpToPixel(mLegend.getYEntrySpace());
-            //this.drawTextOnHeader(c, x - this.mLegend.mNeededWidth / 2.0F, y + Utils.convertDpToPixel(this.mLegend.mNeededHeight), this.chartTitle, this.mLegendLabelPaint.getTextSize() * 1.5F, this.mLegendLabelPaint.getColor());
-            float textHeight = Utils.convertDpToPixel(bounds.bottom - bounds.top + labelLineSpacing);
-            this.drawTextOnHeader(c, x - this.mLegend.mNeededWidth / 2.0F, y + textHeight, this.chartTitle, this.mLegendLabelPaint.getTextSize() * 1.5F, this.mLegendLabelPaint.getColor());
+            float textHeight = bounds.bottom - bounds.top + labelLineSpacing;
+            float topOfGraph = this.mViewPortHandler.getContentRect().top;
+            this.drawTextOnHeader(c, x - this.mLegend.mNeededWidth / 2.0F, topOfGraph - textHeight, this.chartTitle, this.mLegendLabelPaint.getTextSize() * 1.5F, this.mLegendLabelPaint.getColor());
             RectF size = this.mViewPortHandler.getContentRect();
-            //float labelX = Utils.convertDpToPixel( x  - ( mViewPortHandler.offsetRight() + mViewPortHandler.offsetLeft())/2f);
-            //float labelY = Utils.convertDpToPixel(y - (mViewPortHandler.offsetBottom()));
-            //this.drawTextOnHeader(c, labelX, labelY, "Days", this.mLegendLabelPaint.getTextSize() * 1.5F, this.mLegendLabelPaint.getColor());
-            //this.drawTextOnHeader(c, (size.left + size.right) / 2.0F, size.bottom, "Days", this.mLegendLabelPaint.getTextSize() * 1.5F, this.mLegendLabelPaint.getColor());
-            //this.drawTextOnHeader(c, (size.left + size.right) / 2.0f, size.bottom + this.mLegend.mNeededHeight/2f, "Days", this.mLegendLabelPaint.getTextSize() * 1.5F, this.mLegendLabelPaint.getColor());
-//            float tx = (this.mViewPortHandler.offsetRight() + this.mViewPortHandler.offsetLeft())/2f;
-//            float ty =  this.mViewPortHandler.offsetBottom();
-//            this.drawTextOnHeader(c, tx, ty - textHeight , "Days", this.mLegendLabelPaint.getTextSize() * 1.5F, this.mLegendLabelPaint.getColor());
-            this.drawTextOnHeader(c, (size.left + size.right) / 2.0f, size.bottom + textHeight  , "Days", this.mLegendLabelPaint.getTextSize() * 1.5F, this.mLegendLabelPaint.getColor());
+            Paint.FontMetrics yLabelMatrix = mLegendLabelPaint.getFontMetrics();
+            float yLabelHeight = yLabelMatrix.bottom - yLabelMatrix.leading;
+            this.drawTextOnHeader(c, (size.left + size.right) / 2.0f, size.bottom + yLabelHeight * 4 , "Days", this.mLegendLabelPaint.getTextSize() * 1.5F, this.mLegendLabelPaint.getColor());
         }
 
-    }
+    //The following lines are used only for debugging purpose
+    drawBigRect(c);
+    drawChartBorderLine(c);
 }
+
+/** This code is only used for debugging purpose
+ * @param c Canvas
+ */
+public void drawChartBorderLine(Canvas c) {
+        RectF r = mViewPortHandler.getContentRect();
+        int maxX = c.getWidth();
+        int maxY = c.getHeight();
+        Rect rect = new Rect(Math.round(r.left), Math.round(r.top), Math.round(r.right), Math.round(r.bottom));
+        Paint  p = new Paint();
+        p.setStyle(Paint.Style.STROKE);
+        p.setColor(Color.GREEN);
+        c.drawRect(rect,p);
+
+        }
+
+/**
+ * This code is only used for debugging purpose
+ * @param c Canvas
+ */
+public void drawBigRect(Canvas c) {
+        int maxX = c.getWidth();
+        int maxY = c.getHeight();
+        Rect r = new Rect(0,0,maxX, maxY);
+        Paint  p = new Paint();
+        p.setStyle(Paint.Style.STROKE);
+        p.setColor(Color.RED);
+        c.drawRect(r,p);
+        }
+
+        }

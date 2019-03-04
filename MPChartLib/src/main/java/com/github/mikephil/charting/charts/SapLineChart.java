@@ -113,11 +113,10 @@ public class SapLineChart extends LineChart {
             this.getLegendRenderer().getLabelPaint().getTextBounds("ABC", 0, "ABC".length(), bounds);
             float labelLineSpacing = Utils.getLineSpacing(getLegendRenderer().getLabelPaint(), ((SapLegendRenderer)getLegendRenderer()).getLegendFortMetrics())
                     + Utils.convertDpToPixel(mLegend.getYEntrySpace());
-            float titleHeightDp = Utils.convertDpToPixel(bounds.bottom - bounds.top + labelLineSpacing);
+            float titleHeight = bounds.bottom - bounds.top + labelLineSpacing;
 
-            float titleHeightPixel = Utils.convertDpToPixel(titleHeightDp);
-            //offsetTop += titleHeightPixel ;
-            offsetBottom += titleHeightPixel *.5f ;
+            offsetTop += titleHeight ;
+            offsetBottom += titleHeight;
             float minOffset = Utils.convertDpToPixel(mMinOffset);
 
             mViewPortHandler.restrainViewPort(
