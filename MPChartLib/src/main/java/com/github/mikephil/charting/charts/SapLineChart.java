@@ -1,17 +1,33 @@
 package com.github.mikephil.charting.charts;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.Log;
 
 import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.renderer.LegendRenderer;
 import com.github.mikephil.charting.renderer.SapLegendRenderer;
+import com.github.mikephil.charting.renderer.SapXAxisLabelRenderer;
 import com.github.mikephil.charting.utils.Utils;
 
 public class SapLineChart extends LineChart {
+
+    private SapXAxisLabelRenderer mXAxisLabelRenderer;
+
+    /**
+     * Title for the chart
+     */
+    protected String mChartTitle = null;
+
+    public void setXAxisLabel(String label) {
+        this.mXAxisLabel = label;
+    }
+
+    private String mXAxisLabel = null;
 
     public SapLineChart(Context context) {
         super(context);
@@ -26,32 +42,15 @@ public class SapLineChart extends LineChart {
     }
 
 
+    /**
+     * Set the Chart Title
+     */
+    public void setChartTitle(String title) {
+        this.mChartTitle = title;
+    }
 
 
-//    @Override
-//    public void calculateOffsets() {
-//
-//        super.calculateOffsets();
-//        RectF bounds = mViewPortHandler.getContentRect();
-//        float minOffset = Utils.convertDpToPixel(mMinOffset);
-//        float offsetTop = bounds.top;
-//        float offsetRight = bounds.right;
-//        float offsetBottom = bounds.bottom;
-//        float offsetLeft = bounds.left;
-//        float titleHeightDp = Utils.calcTextHeight(this.mDescPaint, "ABC");
-//        float titleHeightPixel = Utils.convertDpToPixel(titleHeightDp);
-//        //offsetTop += titleHeightPixel;
-//        mViewPortHandler.restrainViewPort(
-//                Math.max(minOffset, offsetLeft),
-//                Math.max(minOffset, offsetTop),
-//                Math.max(minOffset, offsetRight),
-//                Math.max(minOffset, offsetBottom));
-//
-//
-//        prepareOffsetMatrix();
-//        prepareValuePxMatrix();
-//        postInvalidate();
-//    }
+
     @Override
     protected void init() {
         super.init();
@@ -59,6 +58,12 @@ public class SapLineChart extends LineChart {
         float legendTitlePixel = Utils.convertDpToPixel(legendTitleDp);
         mLegend.setYOffset(legendTitlePixel);
         mLegendRenderer = new SapLegendRenderer(mViewPortHandler, mLegend);
+
+        float textSize = this.getXAxis().getTextSize();
+        int textColor = this.getXAxis().getTextColor();
+        Typeface textTypeface = this.getXAxis().getTypeface();
+
+        mXAxisLabelRenderer = new SapXAxisLabelRenderer(mViewPortHandler, textSize, textColor, textTypeface);
     }
 
     public void calculateOffsets() {
@@ -109,14 +114,10 @@ public class SapLineChart extends LineChart {
             offsetRight += getExtraRightOffset();
             offsetBottom += getExtraBottomOffset();
             offsetLeft += getExtraLeftOffset();
-            Rect bounds = new Rect();
-            this.getLegendRenderer().getLabelPaint().getTextBounds("ABC", 0, "ABC".length(), bounds);
-            float labelLineSpacing = Utils.getLineSpacing(getLegendRenderer().getLabelPaint(), ((SapLegendRenderer)getLegendRenderer()).getLegendFortMetrics())
-                    + Utils.convertDpToPixel(mLegend.getYEntrySpace());
-            float titleHeight = bounds.bottom - bounds.top + labelLineSpacing;
 
-            offsetTop += titleHeight ;
-            offsetBottom += titleHeight;
+            RectF r = mXAxisLabelRenderer.calculateOffsetBounds();
+            offsetTop += r.top ;
+            offsetBottom += 3 * r.bottom;
             float minOffset = Utils.convertDpToPixel(mMinOffset);
 
             mViewPortHandler.restrainViewPort(
@@ -139,5 +140,16 @@ public class SapLineChart extends LineChart {
 
     }
 
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        if (mXAxisLabel != null ) {
+            float textSize = this.getXAxis().getTextSize();
+            int textColor = this.getXAxis().getTextColor();
+            Typeface textTypeface = this.getXAxis().getTypeface();
+            mXAxisLabelRenderer.renderXAxisLabel(canvas, mXAxisLabel);
+            mXAxisLabelRenderer.renderTitleText(canvas, mChartTitle);
+        }
 
+    }
 }

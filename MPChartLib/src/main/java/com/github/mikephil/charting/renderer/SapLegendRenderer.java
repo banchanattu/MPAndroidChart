@@ -13,10 +13,7 @@ import com.github.mikephil.charting.utils.ViewPortHandler;
 
 public class SapLegendRenderer extends LegendRenderer {
 
-    /**
-     * Title for the chart
-     */
-    protected String chartTitle = null;
+
 
 
     private SelectedValues selectedValues = null;
@@ -26,12 +23,7 @@ public class SapLegendRenderer extends LegendRenderer {
         super(viewPortHandler, legend);
     }
 
-    /**
-     * Set the Chart Title
-     */
-    public void setChartTitle(String title) {
-        this.chartTitle = title;
-    }
+
 
 
     public void setSelectedValue(SelectedValues selVal) {
@@ -45,6 +37,7 @@ public class SapLegendRenderer extends LegendRenderer {
         p.setColor(textColor);
         c.drawText(labelText, x, y, p);
     }
+
 
     public Paint.FontMetrics getLegendFortMetrics() {
         return legendFontMetrics;
@@ -71,18 +64,18 @@ public class SapLegendRenderer extends LegendRenderer {
             this.drawTextOnHeader(c, x + (float)bounds.right * 1.2F, y, this.selectedValues.getYVal(), this.mLegendLabelPaint.getTextSize() * 1.5F, this.mLegendLabelPaint.getColor());
         }
 
-        if (this.chartTitle != null) {
-            bounds = new Rect();
-            float labelLineSpacing = Utils.getLineSpacing(mLegendLabelPaint, legendFontMetrics)
-                    + Utils.convertDpToPixel(mLegend.getYEntrySpace());
-            float textHeight = bounds.bottom - bounds.top + labelLineSpacing;
-            float topOfGraph = this.mViewPortHandler.getContentRect().top;
-            this.drawTextOnHeader(c, x - this.mLegend.mNeededWidth / 2.0F, topOfGraph - textHeight, this.chartTitle, this.mLegendLabelPaint.getTextSize() * 1.5F, this.mLegendLabelPaint.getColor());
-            RectF size = this.mViewPortHandler.getContentRect();
-            Paint.FontMetrics yLabelMatrix = mLegendLabelPaint.getFontMetrics();
-            float yLabelHeight = yLabelMatrix.bottom - yLabelMatrix.leading;
-            this.drawTextOnHeader(c, (size.left + size.right) / 2.0f, size.bottom + yLabelHeight * 4 , "Days", this.mLegendLabelPaint.getTextSize() * 1.5F, this.mLegendLabelPaint.getColor());
-        }
+//        if (this.chartTitle != null) {
+//            bounds = new Rect();
+//            float labelLineSpacing = Utils.getLineSpacing(mLegendLabelPaint, legendFontMetrics)
+//                    + Utils.convertDpToPixel(mLegend.getYEntrySpace());
+//            float textHeight = bounds.bottom - bounds.top + labelLineSpacing;
+//            float topOfGraph = this.mViewPortHandler.getContentRect().top;
+//            this.drawTextOnHeader(c, x - this.mLegend.mNeededWidth / 2.0F, topOfGraph - textHeight, this.chartTitle, this.mLegendLabelPaint.getTextSize() * 1.5F, this.mLegendLabelPaint.getColor());
+//            RectF size = this.mViewPortHandler.getContentRect();
+//            Paint.FontMetrics yLabelMatrix = mLegendLabelPaint.getFontMetrics();
+//            float yLabelHeight = yLabelMatrix.bottom - yLabelMatrix.leading;
+//            //this.drawLabelBelowXAxisHeader(c, (size.left + size.right) / 2.0f, size.bottom + yLabelHeight * 4 , "Days", this.mLegendLabelPaint.getTextSize() * 1.5F, this.mLegendLabelPaint.getColor());
+//        }
 
     //The following lines are used only for debugging purpose
     drawBigRect(c);
