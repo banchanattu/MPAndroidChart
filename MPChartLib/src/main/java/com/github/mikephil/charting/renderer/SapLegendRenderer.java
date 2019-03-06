@@ -29,6 +29,15 @@ public class SapLegendRenderer extends LegendRenderer {
     public void setSelectedValue(SelectedValues selVal) {
         selectedValues = selVal;
     }
+
+
+    public float getLegendHeaderTextHeight() {
+        Rect bounds = new Rect();
+        this.mLegendLabelPaint.getTextBounds("AyDEMO", 0, "AyDEMO".length(), bounds);
+        float textHeight = Utils.convertDpToPixel(bounds.bottom - bounds.top);
+        return textHeight;
+    }
+
     public void drawTextOnHeader(Canvas c, float x, float y, String labelText, float textSize, int textColor) {
         Paint p = new Paint();
         p.setTextAlign(Paint.Align.LEFT);
@@ -64,19 +73,6 @@ public class SapLegendRenderer extends LegendRenderer {
             this.drawTextOnHeader(c, x + (float)bounds.right * 1.2F, y, this.selectedValues.getYVal(), this.mLegendLabelPaint.getTextSize() * 1.5F, this.mLegendLabelPaint.getColor());
         }
 
-//        if (this.chartTitle != null) {
-//            bounds = new Rect();
-//            float labelLineSpacing = Utils.getLineSpacing(mLegendLabelPaint, legendFontMetrics)
-//                    + Utils.convertDpToPixel(mLegend.getYEntrySpace());
-//            float textHeight = bounds.bottom - bounds.top + labelLineSpacing;
-//            float topOfGraph = this.mViewPortHandler.getContentRect().top;
-//            this.drawTextOnHeader(c, x - this.mLegend.mNeededWidth / 2.0F, topOfGraph - textHeight, this.chartTitle, this.mLegendLabelPaint.getTextSize() * 1.5F, this.mLegendLabelPaint.getColor());
-//            RectF size = this.mViewPortHandler.getContentRect();
-//            Paint.FontMetrics yLabelMatrix = mLegendLabelPaint.getFontMetrics();
-//            float yLabelHeight = yLabelMatrix.bottom - yLabelMatrix.leading;
-//            //this.drawLabelBelowXAxisHeader(c, (size.left + size.right) / 2.0f, size.bottom + yLabelHeight * 4 , "Days", this.mLegendLabelPaint.getTextSize() * 1.5F, this.mLegendLabelPaint.getColor());
-//        }
-
     //The following lines are used only for debugging purpose
     drawBigRect(c);
     drawChartBorderLine(c);
@@ -111,4 +107,5 @@ public void drawBigRect(Canvas c) {
         c.drawRect(r,p);
         }
 
-        }
+
+}

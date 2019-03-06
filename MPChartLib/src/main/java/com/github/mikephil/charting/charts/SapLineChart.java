@@ -54,9 +54,9 @@ public class SapLineChart extends LineChart {
     @Override
     protected void init() {
         super.init();
-        float legendTitleDp = Utils.calcTextHeight(this.getLegendRenderer().getLabelPaint(), "ABC");
-        float legendTitlePixel = Utils.convertDpToPixel(legendTitleDp);
-        mLegend.setYOffset(legendTitlePixel);
+        //float legendTitleDp = Utils.calcTextHeight(this.getLegendRenderer().getLabelPaint(), "ABC");
+        //float legendTitlePixel = Utils.convertDpToPixel(legendTitleDp);
+        //mLegend.setYOffset(legendTitlePixel);
         mLegendRenderer = new SapLegendRenderer(mViewPortHandler, mLegend);
 
         float textSize = this.getXAxis().getTextSize();
@@ -64,6 +64,8 @@ public class SapLineChart extends LineChart {
         Typeface textTypeface = this.getXAxis().getTypeface();
 
         mXAxisLabelRenderer = new SapXAxisLabelRenderer(mViewPortHandler, textSize, textColor, textTypeface);
+        float headerExtraSpace = ((SapLegendRenderer)mLegendRenderer).getLegendHeaderTextHeight();// + getLegend().getYOffset();
+        this.getLegend().setYOffset( headerExtraSpace);
     }
 
     public void calculateOffsets() {
