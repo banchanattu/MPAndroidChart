@@ -68,6 +68,10 @@ public class SapLineChart extends LineChart {
         this.getLegend().setYOffset( headerExtraSpace);
     }
 
+    public void setAxisLabelFont(Typeface f) {
+        mXAxisLabelRenderer.setFont(f);
+    }
+
     public void calculateOffsets() {
 
         if (!mCustomViewPortEnabled) {

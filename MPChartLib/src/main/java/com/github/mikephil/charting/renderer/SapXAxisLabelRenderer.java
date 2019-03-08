@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.util.TypedValue;
 
 import com.github.mikephil.charting.utils.Utils;
 import com.github.mikephil.charting.utils.ViewPortHandler;
@@ -23,6 +24,10 @@ public class SapXAxisLabelRenderer extends Renderer {
         this.mTextSize = textSize;
         this.mTextColor = textColor;
         this.mTypeFace = typeFace;
+    }
+
+    public void  setFont(Typeface f) {
+       this.mTypeFace = f;
     }
 
     public RectF calculateOffsetBounds() {
@@ -79,6 +84,8 @@ public class SapXAxisLabelRenderer extends Renderer {
         float yPosition = rectF.top - fm.descent ;
 
         c.drawText(title, xPosition, yPosition, p);
+
+
 
     }
 }
