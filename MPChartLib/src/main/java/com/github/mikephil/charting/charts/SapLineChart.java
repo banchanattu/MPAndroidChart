@@ -2,8 +2,6 @@ package com.github.mikephil.charting.charts;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
@@ -17,6 +15,7 @@ import com.github.mikephil.charting.utils.Utils;
 public class SapLineChart extends LineChart {
 
     private SapXAxisLabelRenderer mXAxisLabelRenderer;
+    private float mAxisLabeTextSize = 18f;
 
     /**
      * Title for the chart
@@ -49,6 +48,13 @@ public class SapLineChart extends LineChart {
         this.mChartTitle = title;
     }
 
+    /**
+     * Set Axis labels text Size
+     */
+    public void setAxisLabeTextSize(float textSize) {
+        this.mAxisLabeTextSize = textSize;
+        mXAxisLabelRenderer.setTextSize(textSize);
+    }
 
 
     @Override
@@ -59,11 +65,11 @@ public class SapLineChart extends LineChart {
         //mLegend.setYOffset(legendTitlePixel);
         mLegendRenderer = new SapLegendRenderer(mViewPortHandler, mLegend);
 
-        float textSize = this.getXAxis().getTextSize();
+        //float textSize = mLegend.getTextSize();
         int textColor = this.getXAxis().getTextColor();
         Typeface textTypeface = this.getXAxis().getTypeface();
 
-        mXAxisLabelRenderer = new SapXAxisLabelRenderer(mViewPortHandler, textSize, textColor, textTypeface);
+        mXAxisLabelRenderer = new SapXAxisLabelRenderer(mViewPortHandler, mAxisLabeTextSize, textColor, textTypeface);
         float headerExtraSpace = ((SapLegendRenderer)mLegendRenderer).getLegendHeaderTextHeight();// + getLegend().getYOffset();
         this.getLegend().setYOffset( headerExtraSpace);
     }

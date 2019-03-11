@@ -14,9 +14,9 @@ import com.github.mikephil.charting.utils.ViewPortHandler;
 
 public class SapXAxisLabelRenderer extends Renderer {
 
-   private float mTextSize;
+   private float mTextSize ;
    //Will decide later how to find out logically.
-   private float mTitleTextSize = 36;
+   //private float mTitleTextSize = 36;
    private int mTextColor;
    Typeface mTypeFace;
    public SapXAxisLabelRenderer(ViewPortHandler viewPortHandler, float textSize, int textColor, Typeface typeFace) {
@@ -28,6 +28,9 @@ public class SapXAxisLabelRenderer extends Renderer {
 
     public void  setFont(Typeface f) {
        this.mTypeFace = f;
+    }
+    public  void setTextSize(float size) {
+       this.mTextSize = size;
     }
 
     public RectF calculateOffsetBounds() {
@@ -41,7 +44,7 @@ public class SapXAxisLabelRenderer extends Renderer {
         Rect r = new Rect();
         p.getTextBounds("AyDEMO", 0, "AyDEMO".length(), r);
         rect.bottom =  (r.bottom - r.top);
-        p.setTextSize(mTitleTextSize);
+        p.setTextSize(mTextSize);
         p.getTextBounds("AyDEMO", 0, "AyDEMO".length(), r);
         rect.top = (r.bottom - r.top);;
 
@@ -72,7 +75,7 @@ public class SapXAxisLabelRenderer extends Renderer {
         RectF rectF = mViewPortHandler.getContentRect();
         float xPosition = rectF.left ;
         Paint p = new Paint();
-        p.setTextSize(mTitleTextSize);
+        p.setTextSize(mTextSize);
         p.setColor(mTextColor);
         p.setTypeface(mTypeFace);
         p.setTextAlign(Paint.Align.LEFT);
