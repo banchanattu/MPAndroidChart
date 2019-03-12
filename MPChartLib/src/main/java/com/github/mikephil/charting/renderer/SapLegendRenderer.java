@@ -34,7 +34,7 @@ public class SapLegendRenderer extends LegendRenderer {
     public float getLegendHeaderTextHeight() {
         Rect bounds = new Rect();
         this.mLegendLabelPaint.getTextBounds("AyDEMO", 0, "AyDEMO".length(), bounds);
-        float textHeight = Utils.convertDpToPixel(bounds.bottom - bounds.top);
+        float textHeight = bounds.bottom - bounds.top;//Utils.convertDpToPixel(bounds.bottom - bounds.top);
         return textHeight;
     }
 
@@ -65,10 +65,10 @@ public class SapLegendRenderer extends LegendRenderer {
         Rect bounds;
         if (this.selectedValues != null) {
             bounds = new Rect();
-            this.mLegendLabelPaint.getTextBounds(label, 0, label.length(), bounds);
-            float labelLineSpacing = Utils.getLineSpacing(mLegendLabelPaint, legendFontMetrics)
-                    + Utils.convertDpToPixel(mLegend.getYEntrySpace());
-            float textHeight = Utils.convertDpToPixel(bounds.bottom - bounds.top + labelLineSpacing);
+            this.mLegendLabelPaint.getTextBounds("AyDemo", 0, "AyDemo".length(), bounds);
+//            float labelLineSpacing = Utils.getLineSpacing(mLegendLabelPaint, legendFontMetrics)
+//                    + Utils.convertDpToPixel(mLegend.getYEntrySpace());
+            float textHeight = /*Utils.convertDpToPixel*/(bounds.bottom - bounds.top)*2f;
             this.drawTextOnHeader(c, x + (float)bounds.right * 1.2F, y - textHeight, this.selectedValues.getXVal(), this.mLegendLabelPaint.getTextSize(), this.mLegendLabelPaint.getColor());
             this.drawTextOnHeader(c, x + (float)bounds.right * 1.2F, y, this.selectedValues.getYVal(), this.mLegendLabelPaint.getTextSize() * 1.5F, this.mLegendLabelPaint.getColor());
         }

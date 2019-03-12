@@ -71,7 +71,7 @@ public class SapLineChart extends LineChart {
 
         mXAxisLabelRenderer = new SapXAxisLabelRenderer(mViewPortHandler, mAxisLabeTextSize, textColor, textTypeface);
         float headerExtraSpace = ((SapLegendRenderer)mLegendRenderer).getLegendHeaderTextHeight();// + getLegend().getYOffset();
-        this.getLegend().setYOffset( headerExtraSpace);
+        this.getLegend().setYOffset( headerExtraSpace * 2f);
     }
 
     public void setAxisLabelFont(Typeface f) {
