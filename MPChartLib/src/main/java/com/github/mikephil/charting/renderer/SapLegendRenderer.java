@@ -68,6 +68,7 @@ public class SapLegendRenderer extends LegendRenderer {
             this.mLegendLabelPaint.getTextBounds("AyDemo", 0, "AyDemo".length(), bounds);
 //            float labelLineSpacing = Utils.getLineSpacing(mLegendLabelPaint, legendFontMetrics)
 //                    + Utils.convertDpToPixel(mLegend.getYEntrySpace());
+
             float textHeight = /*Utils.convertDpToPixel*/(bounds.bottom - bounds.top)*2f;
             this.drawTextOnHeader(c, x + (float)bounds.right * 1.2F, y - textHeight, this.selectedValues.getXVal(), this.mLegendLabelPaint.getTextSize(), this.mLegendLabelPaint.getColor());
             this.drawTextOnHeader(c, x + (float)bounds.right * 1.2F, y, this.selectedValues.getYVal(), this.mLegendLabelPaint.getTextSize() * 1.5F, this.mLegendLabelPaint.getColor());

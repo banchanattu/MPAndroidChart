@@ -44,8 +44,15 @@ public class SapLineChart extends LineChart {
     /**
      * Set the Chart Title
      */
-    public void setChartTitle(String title) {
+    public void setYAxisLabel(String title) {
         this.mChartTitle = title;
+    }
+
+    /**
+     * Get the Chart Title
+     */
+    public String getYAxisLabel() {
+        return this.mChartTitle;
     }
 
     /**
@@ -159,8 +166,10 @@ public class SapLineChart extends LineChart {
             float textSize = this.getXAxis().getTextSize();
             int textColor = this.getXAxis().getTextColor();
             Typeface textTypeface = this.getXAxis().getTypeface();
-            mXAxisLabelRenderer.renderXAxisLabel(canvas, mXAxisLabel);
-            mXAxisLabelRenderer.renderTitleText(canvas, mChartTitle);
+            if (mXAxisLabel != null )
+                mXAxisLabelRenderer.renderXAxisLabel(canvas, mXAxisLabel);
+            if (mChartTitle != null)
+                mXAxisLabelRenderer.renderTitleText(canvas, mChartTitle);
         }
 
     }
