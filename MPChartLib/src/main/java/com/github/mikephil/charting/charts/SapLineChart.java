@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.renderer.SapLegendRenderer;
+import com.github.mikephil.charting.renderer.SapLineChartRenderer;
 import com.github.mikephil.charting.renderer.SapXAxisLabelRenderer;
 import com.github.mikephil.charting.utils.Utils;
 
@@ -70,6 +71,7 @@ public class SapLineChart extends LineChart {
         //float legendTitleDp = Utils.calcTextHeight(this.getLegendRenderer().getLabelPaint(), "ABC");
         //float legendTitlePixel = Utils.convertDpToPixel(legendTitleDp);
         //mLegend.setYOffset(legendTitlePixel);
+        mRenderer = new SapLineChartRenderer(this, mAnimator, mViewPortHandler);
         mLegendRenderer = new SapLegendRenderer(mViewPortHandler, mLegend);
 
         //float textSize = mLegend.getTextSize();
