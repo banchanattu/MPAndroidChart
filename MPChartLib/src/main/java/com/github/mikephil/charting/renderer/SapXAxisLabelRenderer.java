@@ -8,6 +8,7 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.util.TypedValue;
 
+import com.github.mikephil.charting.charts.SapLineChart;
 import com.github.mikephil.charting.utils.Utils;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 
@@ -18,9 +19,11 @@ public class SapXAxisLabelRenderer extends Renderer {
    //Will decide later how to find out logically.
    //private float mTitleTextSize = 36;
    private int mTextColor;
-   Typeface mTypeFace;
-   public SapXAxisLabelRenderer(ViewPortHandler viewPortHandler, float textSize, int textColor, Typeface typeFace) {
+   private Typeface mTypeFace;
+   private SapLineChart mParentChart = null;
+   public SapXAxisLabelRenderer(ViewPortHandler viewPortHandler, SapLineChart parentChart, float textSize, int textColor, Typeface typeFace) {
         super(viewPortHandler);
+        mParentChart = parentChart;
         this.mTextSize = textSize;
         this.mTextColor = textColor;
         this.mTypeFace = typeFace;
@@ -64,7 +67,8 @@ public class SapXAxisLabelRenderer extends Renderer {
 
         Rect r = new Rect();
         p.getTextBounds(label, 0, label.length(), r);
-        float yPosition = rectF.bottom + 2* (r.bottom - r.top);
+
+        float yPosition = (mViewPortHandler.contentBottom() + c.getHeight())/2f + mParentChart.getXAxis().getYOffset() + (r.bottom - r.top);
 
         c.drawText(label, xPosition, yPosition, p);
 

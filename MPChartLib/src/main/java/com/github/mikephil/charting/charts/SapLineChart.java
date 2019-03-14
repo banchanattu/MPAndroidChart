@@ -82,8 +82,9 @@ public class SapLineChart extends LineChart {
         int textColor = this.getXAxis().getTextColor();
         Typeface textTypeface = this.getXAxis().getTypeface();
 
-        mXAxisLabelRenderer = new SapXAxisLabelRenderer(mViewPortHandler, mAxisLabeTextSize, textColor, textTypeface);
-        float headerExtraSpace = ((SapLegendRenderer)mLegendRenderer).getLegendHeaderTextHeight();// + getLegend().getYOffset();
+        mXAxisLabelRenderer = new SapXAxisLabelRenderer(mViewPortHandler, this, mAxisLabeTextSize, textColor, textTypeface);
+        float headerExtraSpace =Utils.convertPixelsToDp(((SapLegendRenderer)mLegendRenderer).getLegendHeaderTextHeight());// + getLegend().getYOffset();
+        //setYOffset need the dp value so let us supply
         this.getLegend().setYOffset( headerExtraSpace * 2f);
     }
 
@@ -175,7 +176,7 @@ public class SapLineChart extends LineChart {
             if (mXAxisLabel != null )
                 mXAxisLabelRenderer.renderXAxisLabel(canvas, mXAxisLabel);
             if (mChartTitle != null)
-                mXAxisLabelRenderer.renderTitleText(canvas, mChartTitle);
+                mXAxisLabelRenderer.renderTitleText(canvas,  mChartTitle);
         }
 
     }
