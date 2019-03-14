@@ -64,6 +64,10 @@ public class SapLineChart extends LineChart {
         mXAxisLabelRenderer.setTextSize(textSize);
     }
 
+    public void setLabelFontType(Typeface tf) {
+        mXAxisLabelRenderer.setFont(tf);
+    }
+
 
     @Override
     protected void init() {
