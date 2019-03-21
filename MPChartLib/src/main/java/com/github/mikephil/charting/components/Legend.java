@@ -53,7 +53,7 @@ public class Legend extends ComponentBase {
     }
 
     public enum LegendHorizontalAlignment {
-        LEFT, CENTER, RIGHT
+        LEFT, CENTER, RIGHT, TOP_LEFT
     }
 
     public enum LegendVerticalAlignment {

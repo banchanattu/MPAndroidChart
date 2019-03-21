@@ -7,6 +7,7 @@ import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.Log;
 
+import com.github.mikephil.charting.components.SapLegend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.renderer.SapLegendRenderer;
 import com.github.mikephil.charting.renderer.SapLineChartRenderer;
@@ -76,6 +77,7 @@ public class SapLineChart extends LineChart {
         //float legendTitlePixel = Utils.convertDpToPixel(legendTitleDp);
         //mLegend.setYOffset(legendTitlePixel);
         mRenderer = new SapLineChartRenderer(this, mAnimator, mViewPortHandler);
+        mLegend = new SapLegend();
         mLegendRenderer = new SapLegendRenderer(mViewPortHandler, mLegend);
 
         //float textSize = mLegend.getTextSize();
@@ -164,6 +166,78 @@ public class SapLineChart extends LineChart {
         prepareOffsetMatrix();
         prepareValuePxMatrix();
 
+    }
+
+    @Override
+    protected void calculateLegendOffsets(RectF offsets) {
+
+        offsets.left = 0.f;
+        offsets.right = 0.f;
+        offsets.top = 0.f;
+        offsets.bottom = 0.f;
+
+        // setup offsets for legend
+        if (mLegend != null && mLegend.isEnabled() && !mLegend.isDrawInsideEnabled()) {
+            switch (mLegend.getOrientation()) {
+                case VERTICAL:
+
+                    switch (mLegend.getHorizontalAlignment()) {
+                        case LEFT:
+                            offsets.left += Math.min(mLegend.mNeededWidth,
+                                    mViewPortHandler.getChartWidth() * mLegend.getMaxSizePercent())
+                                    + mLegend.getXOffset();
+                            break;
+
+                        case RIGHT:
+                            offsets.right += Math.min(mLegend.mNeededWidth,
+                                    mViewPortHandler.getChartWidth() * mLegend.getMaxSizePercent())
+                                    + mLegend.getXOffset();
+                            break;
+
+                        case TOP_LEFT:
+                        case CENTER:
+
+                            switch (mLegend.getVerticalAlignment()) {
+                                case TOP:
+                                    offsets.top += Math.min(mLegend.mNeededHeight,
+                                            mViewPortHandler.getChartHeight() * mLegend.getMaxSizePercent())
+                                            + mLegend.getYOffset();
+                                    break;
+
+                                case BOTTOM:
+                                    offsets.bottom += Math.min(mLegend.mNeededHeight,
+                                            mViewPortHandler.getChartHeight() * mLegend.getMaxSizePercent())
+                                            + mLegend.getYOffset();
+                                    break;
+
+                                default:
+                                    break;
+                            }
+                    }
+
+                    break;
+
+                case HORIZONTAL:
+
+                    switch (mLegend.getVerticalAlignment()) {
+                        case TOP:
+                            offsets.top += Math.min(mLegend.mNeededHeight,
+                                    mViewPortHandler.getChartHeight() * mLegend.getMaxSizePercent())
+                                    + mLegend.getYOffset();
+                            break;
+
+                        case BOTTOM:
+                            offsets.bottom += Math.min(mLegend.mNeededHeight,
+                                    mViewPortHandler.getChartHeight() * mLegend.getMaxSizePercent())
+                                    + mLegend.getYOffset();
+                            break;
+
+                        default:
+                            break;
+                    }
+                    break;
+            }
+        }
     }
 
     @Override
