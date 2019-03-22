@@ -251,13 +251,10 @@ public class SapLineChart extends LineChart {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (mXAxisLabel != null ) {
-            float textSize = this.getXAxis().getTextSize();
-            int textColor = this.getXAxis().getTextColor();
-            Typeface textTypeface = this.getXAxis().getTypeface();
-            if (mXAxisLabel != null )
-                mXAxisLabelRenderer.renderXAxisLabel(canvas, mXAxisLabel);
-            if (mChartTitle != null)
-                mXAxisLabelRenderer.renderTitleText(canvas,  mChartTitle);
+           mXAxisLabelRenderer.renderXAxisLabel(canvas, mXAxisLabel);
+        }
+        if (mChartTitle != null) {
+           mXAxisLabelRenderer.renderTitleText(canvas,  mChartTitle);
         }
 
     }
