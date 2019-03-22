@@ -11,6 +11,10 @@ import android.graphics.Typeface;
 
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.LegendEntry;
+import com.github.mikephil.charting.data.SapSelectedDataSet;
+import com.github.mikephil.charting.formatter.SapLegendValueFormater;
+import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.github.mikephil.charting.listener.SapMultiValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.FSize;
 import com.github.mikephil.charting.utils.Utils;
@@ -22,8 +26,9 @@ public class SapLegendRenderer extends LegendRenderer {
 
 
 
-
+    private SapLegendValueFormater legendValueFormater = null;
     private SelectedValues selectedValues = null;
+    private SapSelectedDataSet selectedMultiValueData = null;
     private static final int LABELTOVALUEGAP = 30;
 
 
@@ -33,9 +38,15 @@ public class SapLegendRenderer extends LegendRenderer {
 
 
 
+    public void setLegendValueFormater(SapLegendValueFormater formater) {
+        this.legendValueFormater = formater;
+    }
 
     public void setSelectedValue(SelectedValues selVal) {
         selectedValues = selVal;
+    }
+    public void setSelectedMultiValueData(SapSelectedDataSet selectedData) {
+        selectedMultiValueData = selectedData;
     }
 
 
@@ -183,7 +194,7 @@ public class SapLegendRenderer extends LegendRenderer {
                 Rect bounds = new Rect();
                 this.mLegendLabelPaint.getTextBounds("AyDemo", 0, "AyDemo".length(), bounds);
                 float textLength  = Utils.calcTextWidth(mLegendLabelPaint, entries[0].label);
-                if (this.selectedValues != null) {
+                if (this.selectedMultiValueData != null) {
                     float legendSize = Float.isNaN(entries[0].formSize) ? defaultFormSize : Utils.convertDpToPixel(entries[0].formSize);
                     drawXValHeader(c, originPosX + legendSize + textLength + formToTextSpace + gap, posY);
                 }
@@ -232,9 +243,9 @@ public class SapLegendRenderer extends LegendRenderer {
                             posX -= calculatedLabelSizes.get(i).width;
 
                         drawLabel(c, posX, posY + labelLineHeight, e.label);
-                        if (this.selectedValues != null) {
+                        if (this.selectedMultiValueData != null) {
                             posX += textLength + gap;
-                            drawYValWithLabel(c, posX, posY + labelLineHeight , selectedValues.getYVal() );
+                            drawYValWithLabel(c, posX, posY + labelLineHeight , i );
                         }
 
                         if (direction == Legend.LegendDirection.LEFT_TO_RIGHT)
@@ -281,7 +292,7 @@ public class SapLegendRenderer extends LegendRenderer {
                 Rect bounds = new Rect();
                 this.mLegendLabelPaint.getTextBounds("AyDemo", 0, "AyDemo".length(), bounds);
                 float textLength  = Utils.calcTextWidth(mLegendLabelPaint, entries[0].label);
-                if (this.selectedValues != null) {
+                if (this.selectedMultiValueData != null) {
                     float legendSize = Float.isNaN(entries[0].formSize) ? defaultFormSize : Utils.convertDpToPixel(entries[0].formSize);
                     drawXValHeader(c, originPosX + legendSize + textLength + formToTextSpace + gap, posY);
                 }
@@ -321,16 +332,16 @@ public class SapLegendRenderer extends LegendRenderer {
 
                         if (!wasStacked) {
                             drawLabel(c, posX, posY + labelLineHeight, e.label);
-                            if (this.selectedValues != null) {
+                            if (this.selectedMultiValueData != null) {
                                 posX += textLength + gap;
-                                drawYValWithLabel(c, posX, posY + labelLineHeight , selectedValues.getYVal() );
+                                drawYValWithLabel(c, posX, posY + labelLineHeight , i );
                             }
                         } else {
                             posY += labelLineHeight + labelLineSpacing;
                             drawLabel(c, posX, posY + labelLineHeight, e.label);
-                            if (this.selectedValues != null) {
+                            if (this.selectedMultiValueData != null) {
                                 posX += textLength + gap;
-                                drawYValWithLabel(c, posX, posY + labelLineHeight, selectedValues.getYVal() );
+                                drawYValWithLabel(c, posX, posY + labelLineHeight, i );
                             }
                         }
 
@@ -435,15 +446,27 @@ public class SapLegendRenderer extends LegendRenderer {
         return legendFontMetrics;
     }
 
-    protected void drawYValWithLabel(Canvas c, float x, float y, String labelText) {
+    protected void drawYValWithLabel(Canvas c, float x, float y, int index) {
         Paint p = new Paint(mLegendLabelPaint);
+        String labelText = null;
+        if (this.legendValueFormater != null) {
+            labelText = legendValueFormater.formatYValue(selectedMultiValueData.getYvalueForDataSetIndex(index));
+        } else {
+            labelText = SapSelectedDataSet.getDecimalFormattedData(selectedMultiValueData.getYvalueForDataSetIndex(index));
+        }
         p.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
         c.drawText(labelText, x, y, p);
 
     }
 
     protected void drawXValHeader(Canvas c, float x, float y) {
-        this.drawTextOnHeader(c, x, y , this.selectedValues.getXVal(), this.mLegendLabelPaint.getTextSize(), this.mLegendLabelPaint.getColor());
+        String formattedXval = null;
+        if (this.legendValueFormater != null) {
+            formattedXval = legendValueFormater.formatXValue(this.selectedMultiValueData.getXValue());
+        } else {
+            formattedXval = SapSelectedDataSet.getDecimalFormattedData(this.selectedMultiValueData.getXValue());
+        }
+        this.drawTextOnHeader(c, x, y , formattedXval, this.mLegendLabelPaint.getTextSize(), this.mLegendLabelPaint.getColor());
     }
     /**,
      /**

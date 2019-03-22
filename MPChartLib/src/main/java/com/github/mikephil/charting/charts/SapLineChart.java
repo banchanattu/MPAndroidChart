@@ -9,12 +9,19 @@ import android.util.Log;
 
 import com.github.mikephil.charting.components.SapLegend;
 import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.SapSelectedDataSet;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.SapMultiValueSelectedListener;
 import com.github.mikephil.charting.renderer.SapLegendRenderer;
 import com.github.mikephil.charting.renderer.SapLineChartRenderer;
 import com.github.mikephil.charting.renderer.SapXAxisLabelRenderer;
 import com.github.mikephil.charting.utils.Utils;
 
+
 public class SapLineChart extends LineChart {
+
+    private SapMultiValueSelectedListener mMultiValueSelectedListener =null;
 
     private SapXAxisLabelRenderer mXAxisLabelRenderer;
     private float mAxisLabeTextSize = 18f;
@@ -253,5 +260,83 @@ public class SapLineChart extends LineChart {
                 mXAxisLabelRenderer.renderTitleText(canvas,  mChartTitle);
         }
 
+    }
+
+
+    public void setMultiValueSelectedListener(SapMultiValueSelectedListener mMultiValueSelectedListener) {
+        this.mMultiValueSelectedListener = mMultiValueSelectedListener;
+    }
+
+    /**
+     * Highlights the value selected by touch gesture. Unlike
+     * highlightValues(...), this generates a callback to the
+     * OnChartValueSelectedListener.
+     *
+     * @param high         - the highlight object
+     * @param callListener - call the listener
+     */
+    @Override
+    public void highlightValue(Highlight high, boolean callListener) {
+
+        Entry e = null;
+
+
+
+        if (high == null)
+            mIndicesToHighlight = null;
+        else {
+
+            if (mLogEnabled)
+                Log.i(LOG_TAG, "Highlighted: " + high.toString());
+
+            e = mData.getEntryForHighlight(high);
+            if (e == null) {
+                mIndicesToHighlight = null;
+                high = null;
+            } else {
+
+                // set the indices to highlight
+                mIndicesToHighlight = new Highlight[]{
+                        high
+                };
+            }
+        }
+
+        setLastHighlighted(mIndicesToHighlight);
+
+        /**
+         * Select All the Values
+         *
+         */
+        SapSelectedDataSet selectedDataSet = null;
+        if (high != null) {
+            float[] selectedYVals = null;
+            int selectedIndex =(int)mData.getEntryForHighlight(high).getX();
+            int dataSetCount = mData.getDataSetCount();
+            selectedYVals = new float[dataSetCount];
+            for (int i = 0; i < dataSetCount; i++) {
+                selectedYVals[i] = mData.getDataSetByIndex(i).getEntryForIndex(selectedIndex).getY();
+            }
+            selectedDataSet = new SapSelectedDataSet(mData.getEntryForHighlight(high).getX(), selectedYVals);
+        }
+        if (callListener && mMultiValueSelectedListener != null) {
+            if (!valuesToHighlight())
+                mMultiValueSelectedListener.onUnSelected();
+            else
+                mMultiValueSelectedListener.onMultiValuesSelected(selectedDataSet);
+        }
+
+        if (callListener && mSelectionListener != null) {
+
+            if (!valuesToHighlight())
+                mSelectionListener.onNothingSelected();
+            else {
+                // notify the listener
+                mSelectionListener.onValueSelected(e, high);
+            }
+        }
+
+        // redraw the chart
+        invalidate();
     }
 }
