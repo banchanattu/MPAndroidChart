@@ -10,8 +10,13 @@ public class SapLegend extends Legend {
 
     public void calculateDimensions(Paint labelpaint, ViewPortHandler viewPortHandler) {
       super.calculateDimensions(labelpaint, viewPortHandler);
+        /**
+         * Original MPAndroid chart had issue where the dimension calculation did not use line spacing.
+         * To fix that Add that here. This became an issue only after we are using in a more flexible way
+         * Where we can add additional charts dynamically.
+         */
+        mNeededHeight += this.getEntries().length *   Utils.getLineSpacing(labelpaint, new Paint.FontMetrics());
         //Additional space needed because we have added Y value title in our customization
-       //  this.setYOffset(Utils.getLineHeight(labelpaint) * 2);
         mNeededHeight +=   2 *  Utils.getLineHeight(labelpaint);
     }
 }
