@@ -1,6 +1,7 @@
 package com.github.mikephil.charting.renderer;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 
@@ -22,7 +23,8 @@ public class SapLineChartRenderer extends LineChartRenderer {
     public void drawHighlighted(Canvas c, Highlight[] indices) {
 
         LineData lineData = mChart.getLineData();
-
+        float[] XVal = new float[2];
+        int indexCount = 0;
         for (Highlight high : indices) {
 
             ILineDataSet set = lineData.getDataSetByIndex(high.getDataSetIndex());
@@ -44,8 +46,19 @@ public class SapLineChartRenderer extends LineChartRenderer {
             drawHighlightLines(c, (float) pix.x, (float) pix.y, set);
             drawTriangle(c, (float)pix.x, (float)pix.y, 12f, 25f, true, set);
             //drawTriangle(c, (float)pix.x, (float)pix.y, 12f, 7f, false, set);
+            XVal[indexCount++] = (float) pix.x;
 
         }
+        if (indexCount == 2) {
+            drawBigSquare(c, XVal[0], XVal[1]);
+        }
+    }
+
+    private void drawBigSquare(Canvas c, float X1, float X2) {
+        Paint p = new Paint();
+        p.setColor(Color.TRANSPARENT);
+        p.setAlpha(20);
+        c.drawRect(X1, mViewPortHandler.contentTop(), X2, mViewPortHandler.contentBottom(), p);
     }
 
     private void drawTriangle(Canvas c, float pivotx, float pivoty, float height, float width, boolean up, ILineDataSet set) {

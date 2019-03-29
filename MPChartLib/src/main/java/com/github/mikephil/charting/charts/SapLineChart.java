@@ -12,6 +12,8 @@ import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.SapSelectedDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.SapLineChartGestureListener;
+import com.github.mikephil.charting.listener.SapLineChartTouchListener;
 import com.github.mikephil.charting.listener.SapMultiValueSelectedListener;
 import com.github.mikephil.charting.renderer.SapLegendRenderer;
 import com.github.mikephil.charting.renderer.SapLineChartRenderer;
@@ -22,6 +24,7 @@ import com.github.mikephil.charting.utils.Utils;
 public class SapLineChart extends LineChart {
 
     private SapMultiValueSelectedListener mMultiValueSelectedListener =null;
+    private boolean highlightBegun = false;
 
     private SapXAxisLabelRenderer mXAxisLabelRenderer;
     private float mAxisLabeTextSize = 18f;
@@ -95,6 +98,9 @@ public class SapLineChart extends LineChart {
         float headerExtraSpace =Utils.convertPixelsToDp(((SapLegendRenderer)mLegendRenderer).getLegendHeaderTextHeight());// + getLegend().getYOffset();
         //setYOffset need the dp value so let us supply
         this.getLegend().setYOffset( headerExtraSpace * 2f);
+
+        setOnChartGestureListener(new SapLineChartGestureListener(this));
+        mChartTouchListener = new SapLineChartTouchListener(this, mViewPortHandler.getMatrixTouch(), 3f);
     }
 
     public void setAxisLabelFont(Typeface f) {
@@ -335,5 +341,17 @@ public class SapLineChart extends LineChart {
 
         // redraw the chart
         invalidate();
+    }
+
+    public boolean isHighlightBegun() {
+        return highlightBegun;
+    }
+
+    public void setHighlightBegun(boolean highlightBegun) {
+        this.highlightBegun = highlightBegun;
+    }
+
+    public void setHighlightIndeces(Highlight[] idx) {
+        mIndicesToHighlight = idx;
     }
 }
