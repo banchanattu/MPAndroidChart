@@ -41,13 +41,20 @@ public class SapLineChartTouchListener extends BarLineChartTouchListener {
                     highLighted[1] = controllingChart.getHighlightByTouchPoint(X2, Y2);
                     controllingChart.setHighlightIndeces(highLighted);
                     //controllingChart.drawHighlightingSquare(X1, X2);
+                    /* At this point multi selection is done */
+                    controllingChart.onRangeSelectedListener(highLighted);
                     controllingChart.invalidate();
+
+
+
                     break;
             }
 
             return true;
         }
+
         controllingChart.setHighlightBegun(false);
+        controllingChart.onRangeUnselectedListener();
         return super.onTouch(v, event);
     }
 }

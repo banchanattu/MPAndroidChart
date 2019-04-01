@@ -11,6 +11,7 @@ import android.graphics.Typeface;
 
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.LegendEntry;
+import com.github.mikephil.charting.data.SapSelectedDataRange;
 import com.github.mikephil.charting.data.SapSelectedDataSet;
 import com.github.mikephil.charting.formatter.SapLegendValueFormater;
 import com.github.mikephil.charting.formatter.ValueFormatter;
@@ -20,6 +21,8 @@ import com.github.mikephil.charting.utils.FSize;
 import com.github.mikephil.charting.utils.Utils;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 
+import java.text.DecimalFormat;
+import java.text.Normalizer;
 import java.util.List;
 
 public class SapLegendRenderer extends LegendRenderer {
@@ -28,6 +31,7 @@ public class SapLegendRenderer extends LegendRenderer {
 
     private SapLegendValueFormater legendValueFormater = null;
     private SelectedValues selectedValues = null;
+    private SapSelectedDataRange selectedDataRange = null;
     private SapSelectedDataSet selectedMultiValueData = null;
     private static final int LABELTOVALUEGAP = 30;
 
@@ -243,7 +247,10 @@ public class SapLegendRenderer extends LegendRenderer {
                             posX -= calculatedLabelSizes.get(i).width;
 
                         drawLabel(c, posX, posY + labelLineHeight, e.label);
-                        if (this.selectedMultiValueData != null) {
+                        if  (this.selectedDataRange != null) {
+                            posX += textLength + gap;
+                            drawRangeChageWithLabel(c, posX, posY + labelLineHeight, i);
+                        } else if (this.selectedMultiValueData != null) {
                             posX += textLength + gap;
                             drawYValWithLabel(c, posX, posY + labelLineHeight , i );
                         }
@@ -332,14 +339,20 @@ public class SapLegendRenderer extends LegendRenderer {
 
                         if (!wasStacked) {
                             drawLabel(c, posX, posY + labelLineHeight, e.label);
-                            if (this.selectedMultiValueData != null) {
+                            if  (this.selectedDataRange != null) {
+                                posX += textLength + gap;
+                                drawRangeChageWithLabel(c, posX, posY + labelLineHeight, i);
+                            } else  if (this.selectedMultiValueData != null) {
                                 posX += textLength + gap;
                                 drawYValWithLabel(c, posX, posY + labelLineHeight , i );
                             }
                         } else {
                             posY += labelLineHeight + labelLineSpacing;
                             drawLabel(c, posX, posY + labelLineHeight, e.label);
-                            if (this.selectedMultiValueData != null) {
+                            if  (this.selectedDataRange != null) {
+                                posX += textLength + gap;
+                                drawRangeChageWithLabel(c, posX, posY + labelLineHeight, i);
+                            } else if (this.selectedMultiValueData != null) {
                                 posX += textLength + gap;
                                 drawYValWithLabel(c, posX, posY + labelLineHeight, i );
                             }
@@ -446,6 +459,51 @@ public class SapLegendRenderer extends LegendRenderer {
         return legendFontMetrics;
     }
 
+    protected void drawRangeChageWithLabel(Canvas c, float x, float y, int index) {
+        Paint p = new Paint(mLegendLabelPaint);
+        String rangeText = null;
+        SapLegendValueFormater.FormatColor color = new SapLegendValueFormater.FormatColor(Color.BLACK);
+        float value  = this.selectedDataRange.getDifferentFor(index);
+        if (this.legendValueFormater != null) {
+
+            rangeText = legendValueFormater.formatYValueWithColor(value, color );
+        } else {
+            rangeText = SapSelectedDataSet.getDecimalFormattedData(value);
+        }
+        p.setColor(color.color);
+        p.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        c.drawText(rangeText, x, y, p);
+        float textHeight = Utils.calcTextHeight(p, rangeText);
+        float textLength = Utils.calcTextWidth(p, rangeText);
+        float gap = Utils.convertDpToPixel(25);
+        p.setTextSize(p.getTextSize()/2.f);
+        if (value < 0) {
+            downTriangle(c, p, x + textLength + gap / 2.f, y - textHeight / 2.f, textHeight / 2f);
+        } else {
+            upTriangle(c, p, x + textLength + gap/2.f, y - textHeight/2.0f, textHeight/2f);
+        }
+        c.drawText(legendValueFormater.formatYValue(selectedDataRange.getPercentatgeDifference(index))+"%", x + textLength + gap, y - textHeight/2.f, p);
+
+    }
+
+    protected void downTriangle(Canvas c, Paint p, float x , float y, float height) {
+        Path path = new Path();
+        float sqrt3 = (float)Math.sqrt(3.0f);
+        path.moveTo(x+height/sqrt3, y);
+        path.lineTo(x, y-height);
+        path.lineTo(x+2*height/sqrt3, y-height);
+        c.drawPath(path, p);
+    }
+
+    protected void upTriangle(Canvas c, Paint p, float x , float y, float height) {
+        Path path = new Path();
+        float sqrt3 = (float)Math.sqrt(3.0f);
+        path.moveTo(x, y);
+        path.lineTo(x + 2*height/sqrt3, y);
+        path.lineTo(x+height/sqrt3, y-height);
+        c.drawPath(path, p);
+    }
+
     protected void drawYValWithLabel(Canvas c, float x, float y, int index) {
         Paint p = new Paint(mLegendLabelPaint);
         String labelText = null;
@@ -516,4 +574,7 @@ public void drawBigRect(Canvas c) {
  }
 
 
+    public void setSelectedDataRange(SapSelectedDataRange selectedDataRange) {
+        this.selectedDataRange = selectedDataRange;
+    }
 }

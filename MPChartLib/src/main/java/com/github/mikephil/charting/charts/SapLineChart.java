@@ -15,6 +15,7 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.SapLineChartGestureListener;
 import com.github.mikephil.charting.listener.SapLineChartTouchListener;
 import com.github.mikephil.charting.listener.SapMultiValueSelectedListener;
+import com.github.mikephil.charting.listener.SapRangeSelectedListner;
 import com.github.mikephil.charting.renderer.SapLegendRenderer;
 import com.github.mikephil.charting.renderer.SapLineChartRenderer;
 import com.github.mikephil.charting.renderer.SapXAxisLabelRenderer;
@@ -33,6 +34,7 @@ public class SapLineChart extends LineChart {
      * Title for the chart
      */
     protected String mChartTitle = null;
+    private SapRangeSelectedListner mRangeSelectedListener = null;
 
     public void setXAxisLabel(String label) {
         this.mXAxisLabel = label;
@@ -268,6 +270,22 @@ public class SapLineChart extends LineChart {
 
     public void setMultiValueSelectedListener(SapMultiValueSelectedListener mMultiValueSelectedListener) {
         this.mMultiValueSelectedListener = mMultiValueSelectedListener;
+    }
+
+    public void setRangeSelectedListener(SapRangeSelectedListner rangeSelectedListener) {
+        this.mRangeSelectedListener = rangeSelectedListener;
+    }
+
+    public void onRangeSelectedListener(Highlight[] highlights) {
+        if (mRangeSelectedListener != null) {
+            mRangeSelectedListener.onRangeSelected(highlights);
+        }
+    }
+
+    public void onRangeUnselectedListener() {
+        if (mRangeSelectedListener != null) {
+            mRangeSelectedListener.onRangeUnselected();
+        }
     }
 
     /**
