@@ -14,15 +14,11 @@ import com.github.mikephil.charting.components.LegendEntry;
 import com.github.mikephil.charting.data.SapSelectedDataRange;
 import com.github.mikephil.charting.data.SapSelectedDataSet;
 import com.github.mikephil.charting.formatter.SapLegendValueFormater;
-import com.github.mikephil.charting.formatter.ValueFormatter;
-import com.github.mikephil.charting.listener.SapMultiValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.FSize;
 import com.github.mikephil.charting.utils.Utils;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 
-import java.text.DecimalFormat;
-import java.text.Normalizer;
 import java.util.List;
 
 public class SapLegendRenderer extends LegendRenderer {
@@ -33,11 +29,13 @@ public class SapLegendRenderer extends LegendRenderer {
     private SelectedValues selectedValues = null;
     private SapSelectedDataRange selectedDataRange = null;
     private SapSelectedDataSet selectedMultiValueData = null;
+    private Paint mLegendRangeLabelPaint = null;
     private static final int LABELTOVALUEGAP = 30;
 
 
     public SapLegendRenderer(ViewPortHandler viewPortHandler, Legend legend) {
         super(viewPortHandler, legend);
+        mLegendRangeLabelPaint = new Paint(mLegendLabelPaint);
     }
 
 
@@ -63,12 +61,21 @@ public class SapLegendRenderer extends LegendRenderer {
 
 
     public void drawTextOnHeader(Canvas c, float x, float y, String labelText, float textSize, int textColor) {
-        Paint p = new Paint();
-        p.setTextAlign(Paint.Align.LEFT);
-        p.setTextSize(textSize);
-        p.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-        p.setColor(textColor);
-        c.drawText(labelText, x, y, p);
+        /** Get the existing parameters and we will reset it later for efficiency **/
+        int oldColor = mLegendRangeLabelPaint.getColor();
+        Typeface oldTypeFace = mLegendRangeLabelPaint.getTypeface();
+        float oldTextSize = mLegendRangeLabelPaint.getTextSize();
+
+        mLegendRangeLabelPaint.setTextAlign(Paint.Align.LEFT);
+        mLegendRangeLabelPaint.setTextSize(textSize);
+        mLegendRangeLabelPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        mLegendRangeLabelPaint.setColor(textColor);
+        c.drawText(labelText, x, y, mLegendRangeLabelPaint);
+
+        /** Restore the old paint styles back */
+        mLegendRangeLabelPaint.setColor(oldColor);
+        mLegendRangeLabelPaint.setTextSize(oldTextSize);
+        mLegendRangeLabelPaint.setTypeface(oldTypeFace);
     }
 
     /**
@@ -88,6 +95,8 @@ public class SapLegendRenderer extends LegendRenderer {
 
         mLegendLabelPaint.setTextSize(mLegend.getTextSize());
         mLegendLabelPaint.setColor(mLegend.getTextColor());
+        mLegendRangeLabelPaint.setTextSize(mLegend.getTextSize());
+        mLegendRangeLabelPaint.setColor(mLegend.getTextColor());
 
         float labelLineHeight = Utils.getLineHeight(mLegendLabelPaint, legendFontMetrics);
         float labelLineSpacing = Utils.getLineSpacing(mLegendLabelPaint, legendFontMetrics)
@@ -249,7 +258,7 @@ public class SapLegendRenderer extends LegendRenderer {
                         drawLabel(c, posX, posY + labelLineHeight, e.label);
                         if  (this.selectedDataRange != null) {
                             posX += textLength + gap;
-                            drawRangeChageWithLabel(c, posX, posY + labelLineHeight, i);
+                            drawRangeChangeWithLabel(c, posX, posY + labelLineHeight, i);
                         } else if (this.selectedMultiValueData != null) {
                             posX += textLength + gap;
                             drawYValWithLabel(c, posX, posY + labelLineHeight , i );
@@ -341,7 +350,7 @@ public class SapLegendRenderer extends LegendRenderer {
                             drawLabel(c, posX, posY + labelLineHeight, e.label);
                             if  (this.selectedDataRange != null) {
                                 posX += textLength + gap;
-                                drawRangeChageWithLabel(c, posX, posY + labelLineHeight, i);
+                                drawRangeChangeWithLabel(c, posX, posY + labelLineHeight, i);
                             } else  if (this.selectedMultiValueData != null) {
                                 posX += textLength + gap;
                                 drawYValWithLabel(c, posX, posY + labelLineHeight , i );
@@ -351,7 +360,7 @@ public class SapLegendRenderer extends LegendRenderer {
                             drawLabel(c, posX, posY + labelLineHeight, e.label);
                             if  (this.selectedDataRange != null) {
                                 posX += textLength + gap;
-                                drawRangeChageWithLabel(c, posX, posY + labelLineHeight, i);
+                                drawRangeChangeWithLabel(c, posX, posY + labelLineHeight, i);
                             } else if (this.selectedMultiValueData != null) {
                                 posX += textLength + gap;
                                 drawYValWithLabel(c, posX, posY + labelLineHeight, i );
@@ -459,8 +468,7 @@ public class SapLegendRenderer extends LegendRenderer {
         return legendFontMetrics;
     }
 
-    protected void drawRangeChageWithLabel(Canvas c, float x, float y, int index) {
-        Paint p = new Paint(mLegendLabelPaint);
+    protected void drawRangeChangeWithLabel(Canvas c, float x, float y, int index) {
         String rangeText = null;
         SapLegendValueFormater.FormatColor color = new SapLegendValueFormater.FormatColor(Color.BLACK);
         float value  = this.selectedDataRange.getDifferentFor(index);
@@ -470,19 +478,29 @@ public class SapLegendRenderer extends LegendRenderer {
         } else {
             rangeText = SapSelectedDataSet.getDecimalFormattedData(value);
         }
-        p.setColor(color.color);
-        p.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-        c.drawText(rangeText, x, y, p);
-        float textHeight = Utils.calcTextHeight(p, rangeText);
-        float textLength = Utils.calcTextWidth(p, rangeText);
+        /** Get the existing parameters and we will reset it later for efficiency **/
+        int oldColor = mLegendRangeLabelPaint.getColor();
+        Typeface oldTypeFace = mLegendRangeLabelPaint.getTypeface();
+        float oldTextSize = mLegendRangeLabelPaint.getTextSize();
+
+        mLegendRangeLabelPaint.setColor(color.color);
+        //mLegendRangeLabelPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        c.drawText(rangeText, x, y, mLegendRangeLabelPaint);
+        float textHeight = Utils.calcTextHeight(mLegendRangeLabelPaint, rangeText);
+        float textLength = Utils.calcTextWidth(mLegendRangeLabelPaint, rangeText);
         float gap = Utils.convertDpToPixel(25);
-        p.setTextSize(p.getTextSize()/2.f);
+        mLegendRangeLabelPaint.setTextSize(mLegendRangeLabelPaint.getTextSize()/2.f);
         if (value < 0) {
-            downTriangle(c, p, x + textLength + gap / 2.f, y - textHeight / 2.f, textHeight / 2f);
+            downTriangle(c, mLegendRangeLabelPaint, x + textLength + gap / 2.f, y - textHeight / 2.f, textHeight / 2f);
         } else {
-            upTriangle(c, p, x + textLength + gap/2.f, y - textHeight/2.0f, textHeight/2f);
+            upTriangle(c, mLegendRangeLabelPaint, x + textLength + gap/2.f, y - textHeight/2.0f, textHeight/2f);
         }
-        c.drawText(legendValueFormater.formatYValue(selectedDataRange.getPercentatgeDifference(index))+"%", x + textLength + gap, y - textHeight/2.f, p);
+        c.drawText(legendValueFormater.formatYValue(selectedDataRange.getPercentatgeDifference(index))+"%", x + textLength + gap, y - textHeight/2.f, mLegendRangeLabelPaint);
+
+        /** Setting back to the original state */
+        mLegendRangeLabelPaint.setColor(oldColor);
+        mLegendRangeLabelPaint.setTypeface(oldTypeFace);
+        mLegendRangeLabelPaint.setTextSize(oldTextSize);
 
     }
 
@@ -505,26 +523,44 @@ public class SapLegendRenderer extends LegendRenderer {
     }
 
     protected void drawYValWithLabel(Canvas c, float x, float y, int index) {
-        Paint p = new Paint(mLegendLabelPaint);
         String labelText = null;
         if (this.legendValueFormater != null) {
             labelText = legendValueFormater.formatYValue(selectedMultiValueData.getYvalueForDataSetIndex(index));
         } else {
             labelText = SapSelectedDataSet.getDecimalFormattedData(selectedMultiValueData.getYvalueForDataSetIndex(index));
         }
-        p.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-        c.drawText(labelText, x, y, p);
+        /** Get the existing parameters and we will reset it later for efficiency **/
+        int oldColor = mLegendRangeLabelPaint.getColor();
+        Typeface oldTypeFace = mLegendRangeLabelPaint.getTypeface();
+        float oldTextSize = mLegendRangeLabelPaint.getTextSize();
+
+        //mLegendRangeLabelPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        c.drawText(labelText, x, y, mLegendRangeLabelPaint);
+        /** Setting back to the original state */
+        mLegendRangeLabelPaint.setColor(oldColor);
+        mLegendRangeLabelPaint.setTypeface(oldTypeFace);
+        mLegendRangeLabelPaint.setTextSize(oldTextSize);
 
     }
 
     protected void drawXValHeader(Canvas c, float x, float y) {
         String formattedXval = null;
+        /** Get the existing parameters and we will reset it later for efficiency **/
+        int oldColor = mLegendRangeLabelPaint.getColor();
+        Typeface oldtypeFace = mLegendRangeLabelPaint.getTypeface();
+        float oldTextSize = mLegendRangeLabelPaint.getTextSize();
+
         if (this.legendValueFormater != null) {
             formattedXval = legendValueFormater.formatXValue(this.selectedMultiValueData.getXValue());
         } else {
             formattedXval = SapSelectedDataSet.getDecimalFormattedData(this.selectedMultiValueData.getXValue());
         }
         this.drawTextOnHeader(c, x, y , formattedXval, this.mLegendLabelPaint.getTextSize(), this.mLegendLabelPaint.getColor());
+
+        /** Setting back to the original state */
+        mLegendRangeLabelPaint.setColor(oldColor);
+        mLegendRangeLabelPaint.setTypeface(oldtypeFace);
+        mLegendRangeLabelPaint.setTextSize(oldTextSize);
     }
     /**,
      /**
