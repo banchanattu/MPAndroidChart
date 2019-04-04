@@ -470,13 +470,15 @@ public class SapLegendRenderer extends LegendRenderer {
 
     protected void drawRangeChangeWithLabel(Canvas c, float x, float y, int index) {
         String rangeText = null;
+        String percentageText = null;
         SapLegendValueFormater.FormatColor color = new SapLegendValueFormater.FormatColor(Color.BLACK);
         float value  = this.selectedDataRange.getDifferentFor(index);
         if (this.legendValueFormater != null) {
-
             rangeText = legendValueFormater.formatYValueWithColor(value, color );
+            percentageText = legendValueFormater.formatYValue(selectedDataRange.getPercentatgeDifference(index))+"%";
         } else {
             rangeText = SapSelectedDataSet.getDecimalFormattedData(value);
+            percentageText = selectedDataRange.getPercentatgeDifference(index)+"%";
         }
         /** Get the existing parameters and we will reset it later for efficiency **/
         int oldColor = mLegendRangeLabelPaint.getColor();
@@ -495,7 +497,7 @@ public class SapLegendRenderer extends LegendRenderer {
         } else {
             upTriangle(c, mLegendRangeLabelPaint, x + textLength + gap/2.f, y - textHeight/2.0f, textHeight/2f);
         }
-        c.drawText(legendValueFormater.formatYValue(selectedDataRange.getPercentatgeDifference(index))+"%", x + textLength + gap, y - textHeight/2.f, mLegendRangeLabelPaint);
+        c.drawText(percentageText, x + textLength + gap, y - textHeight/2.f, mLegendRangeLabelPaint);
 
         /** Setting back to the original state */
         mLegendRangeLabelPaint.setColor(oldColor);
