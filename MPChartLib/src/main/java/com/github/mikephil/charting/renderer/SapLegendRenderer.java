@@ -13,7 +13,7 @@ import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.LegendEntry;
 import com.github.mikephil.charting.data.SapSelectedDataRange;
 import com.github.mikephil.charting.data.SapSelectedDataSet;
-import com.github.mikephil.charting.formatter.SapLegendValueFormater;
+import com.github.mikephil.charting.formatter.SapLegendValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.FSize;
 import com.github.mikephil.charting.utils.Utils;
@@ -25,7 +25,7 @@ public class SapLegendRenderer extends LegendRenderer {
 
 
 
-    private SapLegendValueFormater legendValueFormater = null;
+    private SapLegendValueFormatter legendValueFormater = null;
     private SelectedValues selectedValues = null;
     private SapSelectedDataRange selectedDataRange = null;
     private SapSelectedDataSet selectedMultiValueData = null;
@@ -40,7 +40,7 @@ public class SapLegendRenderer extends LegendRenderer {
 
 
 
-    public void setLegendValueFormater(SapLegendValueFormater formater) {
+    public void setLegendValueFormatter(SapLegendValueFormatter formater) {
         this.legendValueFormater = formater;
     }
 
@@ -471,7 +471,7 @@ public class SapLegendRenderer extends LegendRenderer {
     protected void drawRangeChangeWithLabel(Canvas c, float x, float y, int index) {
         String rangeText = null;
         String percentageText = null;
-        SapLegendValueFormater.FormatColor color = new SapLegendValueFormater.FormatColor(Color.BLACK);
+        SapLegendValueFormatter.FormatColor color = new SapLegendValueFormatter.FormatColor(Color.BLACK);
         float value  = this.selectedDataRange.getDifferentFor(index);
         if (this.legendValueFormater != null) {
             rangeText = legendValueFormater.formatYValueWithColor(value, color );

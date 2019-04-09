@@ -2,7 +2,7 @@ package com.github.mikephil.charting.formatter;
 
 import android.graphics.Color;
 
-public interface SapLegendValueFormater {
+public interface SapLegendValueFormatter {
     public class FormatColor {
         public int color;
         public FormatColor(int c) {
