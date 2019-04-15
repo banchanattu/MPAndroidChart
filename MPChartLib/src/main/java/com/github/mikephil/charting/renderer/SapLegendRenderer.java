@@ -52,6 +52,10 @@ public class SapLegendRenderer extends LegendRenderer {
     }
 
 
+    /**
+     * This function uses the legendPaint already configured to calculate text height
+     * @return text height in pixel for the device
+     */
     public float getLegendHeaderTextHeight() {
         Rect bounds = new Rect();
         this.mLegendLabelPaint.getTextBounds("AyDEMO", 0, "AyDEMO".length(), bounds);
@@ -60,6 +64,15 @@ public class SapLegendRenderer extends LegendRenderer {
     }
 
 
+    /**
+     * Draws the header for the legend
+     * @param c Camvas for the legend
+     * @param x x location on the legend
+     * @param y y location on the legend
+     * @param labelText the label text to be drawn
+     * @param textSize  size of the text
+     * @param textColor color of the text
+     */
     public void drawTextOnHeader(Canvas c, float x, float y, String labelText, float textSize, int textColor) {
         /** Get the existing parameters and we will reset it later for efficiency **/
         int oldColor = mLegendRangeLabelPaint.getColor();
@@ -80,7 +93,7 @@ public class SapLegendRenderer extends LegendRenderer {
 
     /**
      * Responsible rendering the legend
-     * @param c
+     * @param c Canvas on which the legend to be drawn
      */
     @Override
     public void renderLegend(Canvas c) {
@@ -468,13 +481,26 @@ public class SapLegendRenderer extends LegendRenderer {
         return legendFontMetrics;
     }
 
+    /**
+     * Draw range value at location provided
+     * @param c Canvas to be used
+     * @param x x location to start label
+     * @param y y location to start label
+     * @param index index of the multi data
+     */
+
     protected void drawRangeChangeWithLabel(Canvas c, float x, float y, int index) {
         String rangeText = null;
         String percentageText = null;
-        SapLegendValueFormatter.FormatColor color = new SapLegendValueFormatter.FormatColor(Color.BLACK);
+        int color = Color.BLACK;
         float value  = this.selectedDataRange.getDifferentFor(index);
         if (this.legendValueFormater != null) {
-            rangeText = legendValueFormater.formatYValueWithColor(value, color );
+            rangeText = legendValueFormater.formatRangeValue(value);
+            if (value < 0) {
+                color = Color.RED;
+            } else {
+                color = Color.GREEN;
+            }
             percentageText = legendValueFormater.formatYValue(selectedDataRange.getPercentatgeDifference(index))+"%";
         } else {
             rangeText = SapSelectedDataSet.getDecimalFormattedData(value);
@@ -485,7 +511,7 @@ public class SapLegendRenderer extends LegendRenderer {
         Typeface oldTypeFace = mLegendRangeLabelPaint.getTypeface();
         float oldTextSize = mLegendRangeLabelPaint.getTextSize();
 
-        mLegendRangeLabelPaint.setColor(color.color);
+        mLegendRangeLabelPaint.setColor(color);
         //mLegendRangeLabelPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
         c.drawText(rangeText, x, y, mLegendRangeLabelPaint);
         float textHeight = Utils.calcTextHeight(mLegendRangeLabelPaint, rangeText);
@@ -506,6 +532,14 @@ public class SapLegendRenderer extends LegendRenderer {
 
     }
 
+    /**
+     * Draw an down triangle as the left bottom corner at x, y location provided
+     * @param c Canvas on which to draw
+     * @param p Paint to be used
+     * @param x x location where the triangle should start
+     * @param y y location where the triangle should start
+     * @param height height of the triangle
+     */
     protected void downTriangle(Canvas c, Paint p, float x , float y, float height) {
         Path path = new Path();
         float sqrt3 = (float)Math.sqrt(3.0f);
@@ -515,6 +549,14 @@ public class SapLegendRenderer extends LegendRenderer {
         c.drawPath(path, p);
     }
 
+    /**
+     * Draw an up triangle as the left botton corner at x, y location provided
+     * @param c Canvas on which to draw
+     * @param p Paint to be used
+     * @param x x location where the triangle should start
+     * @param y y location where the triangle should start
+     * @param height height of the triangle
+     */
     protected void upTriangle(Canvas c, Paint p, float x , float y, float height) {
         Path path = new Path();
         float sqrt3 = (float)Math.sqrt(3.0f);
@@ -523,6 +565,14 @@ public class SapLegendRenderer extends LegendRenderer {
         path.lineTo(x+height/sqrt3, y-height);
         c.drawPath(path, p);
     }
+
+    /**
+     * Draws the selected Y value at the right side of the labe text
+     * @param c Camvas on which to be drawn
+     * @param x  x location for the Y value text
+     * @param y  y location for the  Y value text
+     * @param index index of the multiline data
+     */
 
     protected void drawYValWithLabel(Canvas c, float x, float y, int index) {
         String labelText = null;
@@ -545,6 +595,12 @@ public class SapLegendRenderer extends LegendRenderer {
 
     }
 
+    /**
+     * Draw the X value header
+     * @param c Canvas to be used to draw
+     * @param x x location for header
+     * @param y y location for the header
+     */
     protected void drawXValHeader(Canvas c, float x, float y) {
         String formattedXval = null;
         /** Get the existing parameters and we will reset it later for efficiency **/
@@ -611,8 +667,11 @@ public void drawBigRect(Canvas c) {
         c.drawRect(r,p);
  }
 
-
-    public void setSelectedDataRange(SapSelectedDataRange selectedDataRange) {
+    /**
+     * This function sets the selected range of data by mutlti touch.
+     * @param selectedDataRange
+     */
+ public void setSelectedDataRange(SapSelectedDataRange selectedDataRange) {
         this.selectedDataRange = selectedDataRange;
     }
 }
