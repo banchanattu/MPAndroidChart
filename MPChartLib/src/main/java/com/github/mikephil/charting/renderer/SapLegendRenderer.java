@@ -36,6 +36,9 @@ public class SapLegendRenderer extends LegendRenderer {
     public SapLegendRenderer(ViewPortHandler viewPortHandler, Legend legend) {
         super(viewPortHandler, legend);
         mLegendRangeLabelPaint = new Paint(mLegendLabelPaint);
+        if (mLegend.getDirection() == Legend.LegendDirection.RIGHT_TO_LEFT) {
+            mLegendRangeLabelPaint.setTextAlign(Paint.Align.RIGHT);
+        }
     }
 
 
@@ -164,7 +167,8 @@ public class SapLegendRenderer extends LegendRenderer {
                 else
                     originPosX = mViewPortHandler.contentLeft() + xoffset;
                 if (direction == Legend.LegendDirection.RIGHT_TO_LEFT)
-                    originPosX += mLegend.mNeededWidth;
+                    //originPosX += mLegend.mNeededWidth;
+                    originPosX    = mViewPortHandler.contentRight() - originPosX;
 
                 break;
 
@@ -222,7 +226,11 @@ public class SapLegendRenderer extends LegendRenderer {
                 float textLength  = Utils.calcTextWidth(mLegendLabelPaint, entries[0].label);
                 if (this.selectedMultiValueData != null) {
                     float legendSize = Float.isNaN(entries[0].formSize) ? defaultFormSize : Utils.convertDpToPixel(entries[0].formSize);
-                    drawXValHeader(c, originPosX + legendSize + textLength + formToTextSpace + gap, posY);
+                    if (mLegend.getDirection() == Legend.LegendDirection.RIGHT_TO_LEFT) {
+                        drawXValHeader(c, originPosX - legendSize - textLength - formToTextSpace - gap, posY);
+                    } else {
+                        drawXValHeader(c, originPosX + legendSize + textLength + formToTextSpace + gap, posY);
+                    }
                 }
                 posY += (bounds.bottom - bounds.top);
 
@@ -270,10 +278,18 @@ public class SapLegendRenderer extends LegendRenderer {
 
                         drawLabel(c, posX, posY + labelLineHeight, e.label);
                         if  (this.selectedDataRange != null) {
-                            posX += textLength + gap;
+                            if (direction == Legend.LegendDirection.RIGHT_TO_LEFT) {
+                                posX -= gap;
+                            } else {
+                                posX += textLength + gap;
+                            }
                             drawRangeChangeWithLabel(c, posX, posY + labelLineHeight, i);
                         } else if (this.selectedMultiValueData != null) {
-                            posX += textLength + gap;
+                            if (direction == Legend.LegendDirection.RIGHT_TO_LEFT) {
+                                posX -= gap;
+                            } else {
+                                posX += textLength + gap;
+                            }
                             drawYValWithLabel(c, posX, posY + labelLineHeight , i );
                         }
 
@@ -323,7 +339,11 @@ public class SapLegendRenderer extends LegendRenderer {
                 float textLength  = Utils.calcTextWidth(mLegendLabelPaint, entries[0].label);
                 if (this.selectedMultiValueData != null) {
                     float legendSize = Float.isNaN(entries[0].formSize) ? defaultFormSize : Utils.convertDpToPixel(entries[0].formSize);
-                    drawXValHeader(c, originPosX + legendSize + textLength + formToTextSpace + gap, posY);
+                    if (mLegend.getDirection() == Legend.LegendDirection.RIGHT_TO_LEFT) {
+                        drawXValHeader(c, originPosX - legendSize - textLength - formToTextSpace - gap, posY);
+                    } else {
+                        drawXValHeader(c, originPosX + legendSize + textLength + formToTextSpace + gap, posY);
+                    }
                 }
                 posY += (bounds.bottom - bounds.top);
 
@@ -362,20 +382,36 @@ public class SapLegendRenderer extends LegendRenderer {
                         if (!wasStacked) {
                             drawLabel(c, posX, posY + labelLineHeight, e.label);
                             if  (this.selectedDataRange != null) {
-                                posX += textLength + gap;
+                                if (direction == Legend.LegendDirection.RIGHT_TO_LEFT) {
+                                    posX -= gap;
+                                } else {
+                                    posX += textLength + gap;
+                                }
                                 drawRangeChangeWithLabel(c, posX, posY + labelLineHeight, i);
                             } else  if (this.selectedMultiValueData != null) {
-                                posX += textLength + gap;
+                                if (direction == Legend.LegendDirection.RIGHT_TO_LEFT) {
+                                    posX -= gap;
+                                } else {
+                                    posX += textLength + gap;
+                                }
                                 drawYValWithLabel(c, posX, posY + labelLineHeight , i );
                             }
                         } else {
                             posY += labelLineHeight + labelLineSpacing;
                             drawLabel(c, posX, posY + labelLineHeight, e.label);
                             if  (this.selectedDataRange != null) {
-                                posX += textLength + gap;
+                                if (direction == Legend.LegendDirection.RIGHT_TO_LEFT) {
+                                    posX -= gap;
+                                } else {
+                                    posX += textLength + gap;
+                                }
                                 drawRangeChangeWithLabel(c, posX, posY + labelLineHeight, i);
                             } else if (this.selectedMultiValueData != null) {
-                                posX += textLength + gap;
+                                if (direction == Legend.LegendDirection.RIGHT_TO_LEFT) {
+                                    posX -= gap;
+                                } else {
+                                    posX += textLength + gap;
+                                }
                                 drawYValWithLabel(c, posX, posY + labelLineHeight, i );
                             }
                         }
@@ -518,12 +554,24 @@ public class SapLegendRenderer extends LegendRenderer {
         float textLength = Utils.calcTextWidth(mLegendRangeLabelPaint, rangeText);
         float gap = Utils.convertDpToPixel(25);
         mLegendRangeLabelPaint.setTextSize(mLegendRangeLabelPaint.getTextSize()/2.f);
-        if (value < 0) {
-            downTriangle(c, mLegendRangeLabelPaint, x + textLength + gap / 2.f, y - textHeight / 2.f, textHeight / 2f);
+        if (mLegend.getDirection() == Legend.LegendDirection.RIGHT_TO_LEFT) {
+            mLegendRangeLabelPaint.setTextAlign(Paint.Align.RIGHT);
+            if (value < 0) {
+                downTriangle(c, mLegendRangeLabelPaint, x - textLength - gap / 2.f, y - textHeight / 2.f, textHeight / 2f);
+            } else {
+                upTriangle(c, mLegendRangeLabelPaint, x - textLength - gap / 2.f, y - textHeight / 2.0f, textHeight / 2f);
+            }
+            c.drawText(percentageText, x - textLength - gap, y - textHeight/2.f, mLegendRangeLabelPaint);
+
         } else {
-            upTriangle(c, mLegendRangeLabelPaint, x + textLength + gap/2.f, y - textHeight/2.0f, textHeight/2f);
+            if (value < 0) {
+                downTriangle(c, mLegendRangeLabelPaint, x + textLength + gap / 2.f, y - textHeight / 2.f, textHeight / 2f);
+            } else {
+                upTriangle(c, mLegendRangeLabelPaint, x + textLength + gap / 2.f, y - textHeight / 2.0f, textHeight / 2f);
+            }
+            c.drawText(percentageText, x + textLength + gap, y - textHeight/2.f, mLegendRangeLabelPaint);
         }
-        c.drawText(percentageText, x + textLength + gap, y - textHeight/2.f, mLegendRangeLabelPaint);
+
 
         /** Setting back to the original state */
         mLegendRangeLabelPaint.setColor(oldColor);
@@ -585,7 +633,9 @@ public class SapLegendRenderer extends LegendRenderer {
         int oldColor = mLegendRangeLabelPaint.getColor();
         Typeface oldTypeFace = mLegendRangeLabelPaint.getTypeface();
         float oldTextSize = mLegendRangeLabelPaint.getTextSize();
-
+        if (mLegend.getDirection() == Legend.LegendDirection.RIGHT_TO_LEFT) {
+            mLegendRangeLabelPaint.setTextAlign(Paint.Align.RIGHT);
+        }
         //mLegendRangeLabelPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
         c.drawText(labelText, x, y, mLegendRangeLabelPaint);
         /** Setting back to the original state */
@@ -606,14 +656,20 @@ public class SapLegendRenderer extends LegendRenderer {
         /** Get the existing parameters and we will reset it later for efficiency **/
         int oldColor = mLegendRangeLabelPaint.getColor();
         Typeface oldtypeFace = mLegendRangeLabelPaint.getTypeface();
+
         float oldTextSize = mLegendRangeLabelPaint.getTextSize();
+
 
         if (this.legendValueFormater != null) {
             formattedXval = legendValueFormater.formatXValue(this.selectedMultiValueData.getXValue());
         } else {
             formattedXval = SapSelectedDataSet.getDecimalFormattedData(this.selectedMultiValueData.getXValue());
         }
-        this.drawTextOnHeader(c, x, y , formattedXval, this.mLegendLabelPaint.getTextSize(), this.mLegendLabelPaint.getColor());
+        if (mLegend.getDirection() == Legend.LegendDirection.RIGHT_TO_LEFT) {
+            mLegendRangeLabelPaint.setTextAlign(Paint.Align.RIGHT);
+        }
+        c.drawText(formattedXval, x, y,mLegendRangeLabelPaint);
+        //this.drawTextOnHeader(c, x, y , formattedXval, this.mLegendRangeLabelPaint.getTextSize(), this.mLegendRangeLabelPaint.getColor());
 
         /** Setting back to the original state */
         mLegendRangeLabelPaint.setColor(oldColor);
